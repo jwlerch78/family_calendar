@@ -1,111 +1,103 @@
-const rightIframe = document.getElementById('right');
-const leftIframe = document.getElementById('leftpanel');
-const keyLog = document.getElementById('keyLog');
+// index.js
 
-let mode = "dashboard"; // Track current mode
-let overlay = null;
+let mode = "calendar";      // Current right-panel mode: calendar, camera, map
+let FocusMode = "RightPanel"; // Either "RightPanel" or "LeftPanel"
 
-document.addEventListener('keydown', (event) => {
+const keyLog = document.getElementById("keyLog");
+const rightIframe = document.getElementById("rightIframe");
+const leftIframe = document.getElementById("leftIframe");
+
+function sendToFocus(action) {
+    if (FocusMode === "RightPanel") {
+        rightIframe.contentWindow.postMessage({ action, mode }, "*");
+    } else if (FocusMode === "LeftPanel") {
+        leftIframe.contentWindow.postMessage({ action }, "*");
+    }
+}
+
+function toggleBlack() {
+    if (mode !== "black") {
+        // Switch to black mode
+        mode = "black";
+        rightIframe.src = "black.html";
+    } else {
+        // Restore calendar mode by default
+        mode = "calendar";
+        rightIframe.src = "calendar.html";
+    }
+}
+
+function toggleMode() {
+    // Skip mode switch if in black mode
+    if (mode === "black") return;
+
+    if (mode === "calendar") {
+        mode = "camera";
+        rightIframe.src = "camera.html";
+    } else if (mode === "camera") {
+        mode = "map";
+        rightIframe.src = "map.html";
+    } else {
+        mode = "calendar";
+        rightIframe.src = "calendar.html";
+    }
+}
+
+document.addEventListener("keydown", (event) => {
     event.preventDefault();
     event.stopPropagation();
 
     keyLog.textContent = `${event.keyCode}`;
 
-switch(event.keyCode) {
-    case 38: // up arrow
-        if (mode === "dashboard")
-            rightIframe.contentWindow.postMessage({ action: "upCalendar" }, "*");
-        break;
-    case 40: // down arrow
-        if (mode === "dashboard")
-            rightIframe.contentWindow.postMessage({ action: "downCalendar" }, "*");
-        break;
-    case 179: // play/pause
-        if (mode === "dashboard")
-            leftIframe.contentWindow.postMessage({ action: "change_prev" }, "*");
-        break;
-    case 227: // rewind (Fire TV)
-    case 188: // < (comma) for PC testing
-        if (mode === "dashboard")
-            rightIframe.contentWindow.postMessage({ action: "prev" }, "*");
-        break;
-    case 228: // fast forward (Fire TV)
-    case 190: // > (period) for PC testing
-        if (mode === "dashboard")
-            rightIframe.contentWindow.postMessage({ action: "next" }, "*");
-        break;
-    case 37: // left arrow
-        if (mode === "dashboard")
-            rightIframe.contentWindow.postMessage({ action: "prevCalendar" }, "*");
-        break;
-    case 39: // right arrow
-        if (mode === "dashboard")
-            rightIframe.contentWindow.postMessage({ action: "nextCalendar" }, "*");
-        break;
-    case 13: // Enter → toggle modes
-        toggleMode();
-        break;
-}
+    // --- Always allow toggle black on play/pause ---
+    if (event.keyCode === 179) { 
+        toggleBlack();
+        return;
+    }
+
+    // --- Block all other actions in black mode ---
+    if (mode === "black") return;
+
+    switch (event.keyCode) {
+        case 38: // Up arrow
+            sendToFocus("Up");
+            break;
+        case 40: // Down arrow
+            sendToFocus("Down");
+            break;
+        case 37: // Left arrow
+            sendToFocus("Left");
+            break;
+        case 39: // Right arrow
+            sendToFocus("Right");
+            break;
+        case 227: // Rewind (Fire TV)
+        case 188: // < (comma) PC test
+            sendToFocus("Prev");
+            break;
+        case 228: // Fast forward (Fire TV)
+        case 190: // > (period) PC test
+            if (FocusMode === "LeftPanel") {
+                // Bounce back to RightPanel
+                FocusMode = "RightPanel";
+                // Reset right iframe to its first option (Weekly in calendar, etc.)
+                rightIframe.contentWindow.postMessage(
+                    { action: "boundaryNext", mode },
+                    "*"
+                );
+            } else {
+                sendToFocus("Next");
+            }
+            break;
+        case 13: // Enter → cycle modes
+            toggleMode();
+            break;
+    }
 });
 
-function toggleMode() {
-    if (mode === "dashboard") {
-        mode = "black";
-        overlay = document.createElement("div");
-        overlay.className = "black-overlay";
-        document.body.appendChild(overlay);
-    } else {
-        mode = "dashboard";
-        if (overlay) {
-            overlay.remove();
-            overlay = null;
-        }
+// --- Listen for focus handoff from right iframe ---
+window.addEventListener("message", (event) => {
+    if (event.data.action === "focusLeftPanel") {
+        FocusMode = "LeftPanel";
     }
-}
-
-// Keep focus on dashboard
-function focusDashboard() {
-    window.focus();
-    document.body.focus();
-}
-focusDashboard();
-rightIframe.addEventListener('load', focusDashboard);
-setInterval(focusDashboard, 1000);
-
-// --- Auto black/dash schedule ---
-function updateDisplayMode() {
-    // Re-use toggleMode() style logic but force mode
-    if (mode === "black") {
-        if (!overlay) {
-            overlay = document.createElement("div");
-            overlay.className = "black-overlay";
-            document.body.appendChild(overlay);
-        }
-    } else {
-        if (overlay) {
-            overlay.remove();
-            overlay = null;
-        }
-    }
-}
-
-function checkAutoMode() {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-
-    // Quiet hours = 10:00pm → 6:29am
-    const isNight = (hours >= 22) || (hours < 6 || (hours === 6 && minutes < 30));
-
-    if (isNight && mode !== "black") {
-        mode = "black";
-        updateDisplayMode();
-    } else if (!isNight && mode !== "dashboard") {
-        mode = "dashboard";
-        updateDisplayMode();
-    }
-}
-
-// Run every 15 minutes
-setInterval(checkAutoMode, 10 * 60 * 1000);
-
+});
