@@ -1,3 +1,4 @@
+/* index.css - Cleaned up version */
 :root {
   --bg-left:  #000000;  /* pure black */
   --bg-right: #111111;
@@ -30,6 +31,17 @@ body {
   overflow: hidden;
 }
 
+#leftpanel-wrapper {
+  position: relative;
+  width: 100%;
+  border-bottom: 5px solid transparent; /* default hidden */
+  overflow: hidden;
+}
+
+.left-focus #leftpanel-wrapper {
+  border-bottom-color: #4285f4; /* Google blue */
+}
+
 /* Date_Time iframe wrapper */
 .iframe-wrapper {
   width: 100%;
@@ -59,11 +71,6 @@ body {
   background: #000;   /* black background */
 }
 
-/* Photo container inside LeftPanel */
-#photo-container {
-  background: #000;   /* black behind images */
-}
-
 /* Divider between left and right panels */
 .divider {
   grid-area: divider;
@@ -72,7 +79,7 @@ body {
 }
 
 /* RIGHT PANEL */
-#right {
+#rightpanel {
   grid-area: right;
   background: var(--bg-right);
   border-radius: 10px;
@@ -96,6 +103,7 @@ body {
 
 /* Key log */
 #keyLog {
+  /* display: block; */
   display: none;
   position: fixed;
   bottom: 10px;
