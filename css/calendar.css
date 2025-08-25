@@ -1,4 +1,5 @@
-/* Calendar.css - Optimized Version */
+/* Calendar.css - All formatting in CSS */
+
 /* Base page styles */
 html, body {
   height: 100%;
@@ -50,23 +51,23 @@ html, body {
 
 /* Header container - dynamically shown/hidden */
 #header-container {
-  height: 140px;
+  height: 184px; /* Could be moved to config if needed */
   overflow: hidden;
   position: relative;
   z-index: 10;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease; /* Uses default transition timing */
 }
 
 /* Header container when hidden */
-#header-container[style*="display: none"] {
+#header-container.hidden {
   height: 0 !important;
-  overflow: hidden;
+  display: none !important;
 }
 
 /* Header iframe */
 #header-frame {
   width: 100%;
-  height: 700px;
+  height: 1500px;
   border: 0;
   outline: none;
   position: relative;
@@ -78,37 +79,59 @@ html, body {
 
 /* Hide the header iframe */
 #header-frame.hidden {
-  opacity: 0;
-  pointer-events: none;
+  display: none !important;
 }
 
 /* Calendar container - adjusts based on header visibility */
 #calendar-container {
   flex: 1;
   position: relative;
-  overflow: hidden;
   transition: all 0.3s ease;
 }
 
-/* Scrollable main iframe */
+/* Calendar container states based on mode */
+#calendar-container.weekly-mode,
+#calendar-container.work-mode {
+  overflow: hidden;
+}
+
+#calendar-container.monthly-mode {
+  overflow: visible;
+}
+
+/* Calendar iframes - base styles */
 .calendar-frame {
   width: 100%;
   border: 0 !important;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translateY(0px);
   display: none;
+  transition: transform 0.3s ease;
 }
 
 .calendar-frame.active {
   display: block;
 }
 
+/* Weekly/Work mode iframe styles */
+.calendar-frame.weekly-mode,
+.calendar-frame.work-mode {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 250%;
+  transform: translateY(-500px);
+}
+
+/* Monthly mode iframe styles */
+.calendar-frame.monthly-mode {
+  position: static;
+  height: 100%;
+  transform: translateY(0px);
+}
+
 /* Bottom view indicators */
 .view-indicators {
   display: flex;
-  height: 40px;
+  height: 30px;
   background-color: #222;
 }
 
@@ -122,6 +145,8 @@ html, body {
   border-top: 1px solid #444;
   cursor: pointer;
   transition: all 0.2s ease;
+  user-select: none; /* Prevent text selection on click */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 .view-label.active {
