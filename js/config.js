@@ -5,12 +5,14 @@ const PROXY_URL = "https://traccar-proxy-fcj3.onrender.com";
 
 // Devices
 const DEVICES = [
-  { name: "Dad", id: 1 },
-  { name: "Mom", id: 2 },
-  { name: "Charlie", id: 3 },
-  { name: "Jack", id: 4 },
-  { name: "Mary", id: 5 }
+  { id: 1, name: "Dad", img: "https://raw.githubusercontent.com/jwlerch78/family_calendar/main/images/Dad.png" },
+  { id: 2, name: "Mom", img: "https://raw.githubusercontent.com/jwlerch78/family_calendar/main/images/Mom.png" },
+  { id: 3, name: "Charlie", img: "https://raw.githubusercontent.com/jwlerch78/family_calendar/main/images/Char.png" },
+  { id: 4, name: "Jack", img: "https://raw.githubusercontent.com/jwlerch78/family_calendar/main/images/Jack.png" },
+  { id: 5, name: "Mary", img: "https://raw.githubusercontent.com/jwlerch78/family_calendar/main/images/Mary.png" }
 ];
+
+const HOME_LOCATION = { lat: 27.93241, lon: -82.81062 }; // your home coordinates
 
 // Zones
 const ZONES = [

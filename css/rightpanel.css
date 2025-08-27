@@ -1,0 +1,245 @@
+/* rightpanel.css */
+
+/* Base page styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #000;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/*************************************************************************
+*  Family Tracker bar at top
+**************************************************************************/
+
+/* Family Tracker bar */
+/* Family Tracker bar */
+#family-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* spread members across full width */
+  align-items: flex-start;
+  padding: 10px 16px;
+  background: #000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: height 0.3s ease;
+  overflow: hidden;
+  height: 70px; /* default collapsed height */
+}
+
+#family-bar.location-mode {
+  height: 320px; /* taller in location mode */
+}
+
+/* Each member card */
+.member {
+  display: flex;
+  flex-direction: column; /* stack top row + extra info */
+  align-items: center;
+  background-color: #111;
+  padding: 8px 12px;
+  border-radius: 12px;
+  min-width: 160px;
+  flex: 1; /* allow even distribution across bar */
+  margin: 0 6px; /* spacing between members */
+}
+
+/* Top row: image + location */
+.member-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center; /* center horizontally inside member */
+}
+
+/* Profile photo */
+.member-top img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Info next to photo (main location + subtext) */
+.member-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+/* Main location text */
+.location {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Subtext below main location (icon + distance) */
+.location-sub {
+  font-size: 14px;
+  color: #ccc;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Expanded info (centered under entire top row) */
+.member-extra {
+  display: none;
+  flex-direction: column;
+  font-size: 14px; /* readable size */
+  color: #ddd;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 16px; /* spacing below top row */
+  width: 100%; /* span entire member card */
+}
+
+#family-bar.location-mode .member-extra {
+  display: flex;
+}
+
+/* Optional small icons in subtext */
+.status-icon img {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+/*************************************************************************
+*  Calendar CSS
+**************************************************************************/
+
+#header-container {
+  height: 184px;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+#header-container.hidden {
+  height: 0 !important;
+  display: none !important;
+}
+
+#header-frame {
+  width: 100%;
+  height: 1500px;
+  border: 0;
+  outline: none;
+  position: relative;
+  display: block;
+  top: 0;
+  left: 0;
+  transition: opacity 0.3s ease;
+}
+
+#header-frame.hidden {
+  display: none !important;
+}
+
+#calendar-container {
+  flex: 1;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+#calendar-container.weekly-mode,
+#calendar-container.work-mode {
+  overflow: hidden;
+}
+
+#calendar-container.monthly-mode {
+  overflow: visible;
+}
+
+.calendar-frame {
+  width: 100%;
+  border: 0 !important;
+  display: none;
+  transition: transform 0.3s ease;
+}
+
+.calendar-frame.active {
+  display: block;
+}
+
+.calendar-frame.weekly-mode,
+.calendar-frame.work-mode {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 250%;
+  transform: translateY(-500px);
+}
+
+.calendar-frame.monthly-mode {
+  position: static;
+  height: 100%;
+  transform: translateY(0px);
+}
+
+/*************************************************************************
+*  Location & Camera CSS
+**************************************************************************/
+
+#location-container,
+#camera-container {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align:center; 
+  color:white; 
+  font-size:24px; 
+  padding-top:50px;
+  display: none;
+}
+
+.family-marker img {
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/*************************************************************************
+*  Bottom View Indicators/buttons CSS
+**************************************************************************/
+
+.view-indicators {
+  display: flex;
+  height: 30px;
+  background-color: #222;
+}
+
+.view-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-weight: bold;
+  border-top: 1px solid #444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.view-label.active {
+  color: #fff;
+  background-color: #4285f4;
+}
+
+.view-label.selected {
+  color: #fff;
+  background-color: #99CCFF;
+}
